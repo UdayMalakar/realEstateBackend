@@ -1,7 +1,7 @@
 const express=require("express");
 const app=express();
 const {dbConnect} = require("./config/database");
-// const userRoutes =require("./routes/userRoutes");
+const userRoutes =require("./routes/userRoutes");
 const cookieParser=require("cookie-parser");
 const cors=require("cors");
 require("dotenv").config();
@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 dbConnect();
-// app.use("/api/v1",userRoutes);
+app.use("/api/v1",userRoutes);
 
 app.get("/",(req,res)=>{
     res.send("This is Estate Backend")

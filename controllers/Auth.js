@@ -244,3 +244,49 @@ exports.logout = (req, res) => {
         message: 'Logged out successfully',
     });
 };
+
+
+//update password controlleres
+
+
+exports.changePassword = async(req,res)=>{
+    try{
+
+        const {password,changedPassword}=req.body;
+        if(!password || !changedPassword)
+        {
+                return res.status(404).json({
+                    success:false,
+                    message:"Please Enter all the fields"
+                })
+        }
+        const {email}=req.user;
+        const userExist= await User.findOne({email:email});
+        const passwordMatch = await bcrypt.compare(password,userExist.password);
+        if(!passwordMatch)
+        {
+            return res.status(402)
+            .json({
+                success:false,
+                message:"Password Not matched please enter correct password "
+            })
+        };
+         const hashedPassword=await bcrypt.hash(changedPassword,10);
+         const updatedUser = await User.findByIdAndUpdate(userExist._id,
+            {
+                password:hashedPassword,
+            }
+         )
+         return res.status(200).json({
+            success:true,
+            message:"Password changed successfully"
+         })
+
+    }catch(error)
+    {
+        return res.status(500).json({
+            success:false,
+            message:"Somthing went wrong in password change route"
+        })
+    }
+}
